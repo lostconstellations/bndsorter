@@ -1,1 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ship Ranking</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding: 20px;
+        }
+        .ship-button {
+            padding: 10px 20px;
+            font-size: 18px;
+            cursor: pointer;
+            margin: 10px;
+        }
+        .ship-button:hover {
+            background-color: #f0f0f0;
+        }
+        #battleNumber {
+            font-size: 20px;
+            margin-bottom: 20px;
+        }
+        .results {
+            display: none;
+            font-size: 18px;
+            margin-top: 20px;
+        }
+        .ship-container {
+            margin: 20px 0;
+        }
+        #shipRankings {
+            margin-top: 20px;
+            font-size: 18px;
+        }
+    </style>
+</head>
+<body>
 
+    <h1>Ship Ranking</h1>
+    <div id="battleNumber">Battle #1</div>
+    
+    <div class="ship-container">
+        <button id="leftShip" class="ship-button"></button>
+        <button id="rightShip" class="ship-button"></button>
+    </div>
+
+    <div id="resultField" class="results">
+        <h3>Ranking Results</h3>
+        <ul id="shipRankings"></ul>
+    </div>
+
+    <script>
+        const ships = [
+            "sangsungz (sungho/riwoo)", "myungnyangz (sungho/jaehuyun)", "kkeomchiz (sungho/taesan)", "mulnyangz (sungho/leehan)", "hyukmyungz (riwoo/jaehyun)", "sanriwooz (riwoo/taesan)", "leerionz (riwoo/leehan)", "myungtae (jaehyun/taesan)", "mulmyungz (jaehyun/leehan)", "gongfourz (taesan/leehan)"
+        ];
+
+        let currentBattle = 0;
+        let votes = {};
+        let totalBattles = ships.length;
+
+        function showBattle() {
+            const ship1 = ships[currentBattle];
+            const ship2 = ships[ships.length - 1 - currentBattle];
+
+            document.getElementById("leftShip").textContent = ship1;
+            document.getElementById("rightShip").textContent = ship2;
+            document.getElementById("battleNumber").textContent = `Battle #${currentBattle + 1}`;
+
+            // Track votes for ships if they are selected
+            document.getElementById("leftShip").onclick = () => recordVote(ship1);
+            document.getElementById("rightShip").onclick = () => recordVote(ship2);
+        }
+
+        function recordVote(winner) {
+            if (!votes[winner]) {
+                votes[winner] = 0;
+            }
+            votes[winner]++;
+            currentBattle++;
+
+            if (currentBattle < totalBattles / 2) {
+                showBattle();
+            } else {
+                showResults();
+            }
+        }
+
+        function showResults() {
+            // Sort ships by vote count
+            const sortedShips = Object.entries(votes)
+                .sort((a, b) => b[1] - a[1])
+                .map(entry => entry[0]);
+
+            let resultHtml = sortedShips.map((ship, index) => {
+                return `<li>${index + 1}. ${ship}</li>`;
+            }).join('');
+
+            document.getElementById("shipRankings").innerHTML = resultHtml;
+            document.getElementById("resultField").style.display = "block";
+        }
+
+        // Initialize the ranking system
+        showBattle();
+    </script>
+
+</body>
+</html>
